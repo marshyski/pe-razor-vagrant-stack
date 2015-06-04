@@ -27,13 +27,12 @@ cp -r /vagrant/tasks/6 /opt/puppet/share/razor-server/tasks/centos/
 These are the nodes to be provisioned using Razor. You need at least 4 VMs for this demo.
 
  1. Import the the sample OVA template from the `example_pxe_boot_vm` directory into VirtualBox.
- 1. Rename the VM to `Razor-Template-Large`.
- 1. Change the memory size to 850MB.
- 1. Change the OS type to "Other Linux (64-bit)".
- 1. Make a clone of `Razor-Template-Large` and name it `Razor-Template-Small`
+ 1. Rename the VM to `Razor-Template-Small`.
  1. Change the memory size to 768MB (CentOS 6 install will fail with less than this).
- 1. __Optional__ - Add a second network interface and set it to bridge mode.
-     - If using the bridge interface, uncomment the lines `include network::bridge_dhcp_off` and `include network::bridge_dhcp_on` in `site.pp`.
+ 1. Change the OS type to "Other Linux (64-bit)".
+ 1. Make a clone of `Razor-Template-Small` and name it `Razor-Template-Large`
+ 1. Change the memory size to 850MB.
+ 1. Change the number of CPUs to 2.
 
 Create nodes using the templates. This step requires the `VBoxManage` command line tool.
 
@@ -54,6 +53,9 @@ do
   VBoxManage registervm "${VBOX_VM_DIR}"/Razor-Large-${n}/Razor-Large-${n}.vbox
 done
 ```
+
+Change the number of CPUs to 2 on one of the `Razor-Template-Small` VMs.
+__Optional:__ Add a second network interface to that VM and set it to bridge mode. If using the bridge interface, uncomment the lines `include network::bridge_dhcp_off` and `include network::bridge_dhcp_on` in `site.pp`.
 
 ###  Start nodes
 

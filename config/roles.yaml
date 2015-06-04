@@ -1,6 +1,14 @@
 ---
 roles:
 
+  base:
+    synced_folders:
+      - host_path: '/Users/fvoges/vagrant/aramco/sync'
+        guest_path: '/enod/hpc'
+    provisioners:
+      - type: shell
+        inline: '/enod/hpc/scripts/base.sh'
+
   base_2048mb_ram:
     provider:
       type: virtualbox

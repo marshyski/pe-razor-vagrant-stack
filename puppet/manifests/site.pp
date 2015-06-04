@@ -1,6 +1,10 @@
 
 ## site.pp ##
 
+Package {
+  allow_virtual => false,
+}
+
 # This file (/etc/puppetlabs/puppet/manifests/site.pp) is the main entry point
 # used when an agent connects to a master and asks for an updated configuration.
 #
@@ -53,6 +57,16 @@ node 'puppet-master' {
 
 node 'razor-server' {
  include 'pe_env'
- include 'pe_razor'
+ class { 'pe_razor':
+  pe_tarball_base_url => 'file:///enod/hpc/repos/puppet/pe-packages',
+  microkernel_url     => "file:///enod/hpc/repos/puppet/pe-packages/${::pe_version}/puppet-enterprise-razor-microkernel-${::pe_version}.tar",
+ }
  include 'razor_client'
+ class {'apache':
+  default_vhost => false,
+ }
+ apache::vhost { $fqdn:
+  docroot => '/enod/hpc/repos',
+  port    => '80',
+ }
 }

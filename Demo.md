@@ -83,13 +83,19 @@ razor create-broker --name pe --broker-type puppet-pe --configuration server=pup
 
 ### Tags
 
-Create two tags to apply to nodes based on the `memorysize_mb` fact.
+Create a few tags to apply to nodes based on fact values.
 
 ```shell
 # This tag will be applied to the "small" nodes (768MB ram)
 razor create-tag --name small --rule '["<", ["num", ["fact", "memorysize_mb"]], 800]'
 # This tag will be applied to the "large" nodes (850MB ram)
 razor create-tag --name large --rule '[">=", ["num", ["fact", "memorysize_mb"]], 800]'
+# This tag will be applied to nodes with 1 CPU
+razor create-tag --name 1cpu --rule '["=", ["num", ["fact", "processorcount"]], 1]'
+# This tag will be applied to nodes with 2 CPUs
+razor create-tag --name 2cpu --rule '["=", ["num", ["fact", "processorcount"]], 2]'
+# This tag will be applied to nodes that are virtual machines
+razor create-tag --name virtual --rule '["=",  ["fact", "is_virtual"], true]'
 ```
 
 ### Add a repo
@@ -110,23 +116,28 @@ Policies are the rules used by Razor to decide what to do with the available nod
 
 #### Web servers
 
-This rule will use upto 2 nodes tagged with the tag `small`, provision with CentOS, name them `awesomeweb${id}` (e.g., `node17` would be named `awesomeweb17`).
+This rule will use upto 2 nodes tagged with the tag `small` and `1cpu`, provision with CentOS, name them `awesomeweb${id}` (e.g., `node17` would be named `awesomeweb17`).
 
 ```shell
-razor create-policy --name awesome-web --repo centos-6.6 --broker pe --tag small --enabled --hostname 'awesomeweb${id}' --root-password secret --max-count 2 --task centos/6/custom --node-metadata role=awesome-web --node-metadata group=awesomesite
+razor create-policy --name awesome-web --repo centos-6.6 --broker pe --tag '[ "small", "1cpu" ]' --enabled --hostname 'awesomeweb${id}' --root-password secret --max-count 2 --task centos/6/custom --node-metadata role=awesome-web --node-metadata group=awesomesite
 ```
 
 #### Load balancer
 
+This rule will use 1 node tagged with the tag `small` and `2cpu`, provision with CentOS, name it `awesomesite` (e.g., `node17` would be named `awesomesite`).
+
 ```shell
-razor create-policy --name awesome-lb --repo centos-6.6 --broker pe --tag small --enabled --hostname 'awesomesite' --root-password secret --max-count 1 --task centos/6/custom --node-metadata role=awesome-lb --node-metadata group=awesomesite
+razor create-policy --name awesome-lb --repo centos-6.6 --broker pe --tag '[ "small", "2cpu" ]' --enabled --hostname 'awesomesite' --root-password secret --max-count 1 --task centos/6/custom --node-metadata role=awesome-lb --node-metadata group=awesomesite
 ```
 
 #### MySQL DB server
 
+This rule will use 1 node tagged with the tag `large` and `2cpu`, provision with CentOS, name it `mysqldb${id}` (e.g., `node17` would be named `mysqldb17`).
+
 ```shell
-razor create-policy --name mysqldb --repo centos-6.6 --broker pe --tag large --enabled --hostname 'mysqldb${id}' --root-password secret --max-count 1 --task centos/6/custom --node-metadata role=mysqldb --node-metadata group=db
+razor create-policy --name mysqldb --repo centos-6.6 --broker pe --tag '[ "large", "2cpu" ]' --enabled --hostname 'mysqldb${id}' --root-password secret --max-count 1 --task centos/6/custom --node-metadata role=mysqldb --node-metadata group=db
 ```
+
 
 
 ## Off-line use

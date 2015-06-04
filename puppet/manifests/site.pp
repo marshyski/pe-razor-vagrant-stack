@@ -47,26 +47,115 @@ node default {
 }
 
 node 'dhcp-server' {
- include 'razor_dnsmasq'
- include 'razor_ipv4_forward'
+  class { 'ntp':
+    tinker => true,
+    servers => [ 'puppet-master iburst', ],
+  }
+  include 'razor_dnsmasq'
+  include 'razor_ipv4_forward'
 }
 
 node 'puppet-master' {
- include 'pe_env'
+  class { 'ntp':
+    tinker => true,
+    servers => [ 'pool.ntp.org iburst', ],
+  }
+  include 'pe_env'
 }
 
 node 'razor-server' {
- include 'pe_env'
- class { 'pe_razor':
-  pe_tarball_base_url => 'file:///enod/hpc/repos/puppet/pe-packages',
-  microkernel_url     => "file:///enod/hpc/repos/puppet/pe-packages/${::pe_version}/puppet-enterprise-razor-microkernel-${::pe_version}.tar",
- }
- include 'razor_client'
- class {'apache':
-  default_vhost => false,
- }
- apache::vhost { $fqdn:
-  docroot => '/enod/hpc/repos',
-  port    => '80',
- }
+  class { 'ntp':
+    tinker => true,
+    servers => [ 'puppet-master iburst', ],
+  }
+  include 'pe_env'
+    class { 'pe_razor':
+#    pe_tarball_base_url => 'file:///opt/vagrant-common/repos/pe-packages',
+#    microkernel_url     => "file:///opt/vagrant-common/repos/pe-packages/${::pe_version}/puppet-enterprise-razor-microkernel-${::pe_version}.tar",
+  }
+  include 'razor_client'
+  class {'apache':
+    default_vhost => false,
+  }
+  apache::vhost { $fqdn:
+    docroot        => '/opt/vagrant-common',
+    port           => '80',
+    manage_docroot => false,
+    docroot_owner  => 'vagrant',
+    docroot_group  => 'vagrant',
+  }
+}
+
+node /^awesomeweb\d+/ {
+  class { 'ntp':
+    tinker => true,
+    servers => [ 'puppet-master iburst', ],
+  }
+  #include network::bridge_dhcp_off
+
+  class {'apache':
+    default_vhost => false,
+  }
+  apache::vhost { $fqdn:
+    docroot        => '/opt/www',
+    port           => '80',
+    manage_docroot => true,
+  }
+  file { '/opt/www/index.html':
+    ensure => file,
+    content => "<html>\n<head>\n<title>Awesome Web Site</title>\n</head>\n<body>\n<h1>This is ${::fqdn}</h1>\n</body>\n</html>\n",
+  }
+  file { '/opt/www/index.txt':
+    ensure => file,
+    content => "This is ${::fqdn}\n",
+  }
+  @@haproxy::balancermember { $::fqdn:
+    listening_service => 'awesomesite00',
+    ports             => '80',
+    server_names      => $::hostname,
+    ipaddresses       => $::ipaddress,
+    options           => 'check',
+  }
+}
+
+node 'awesomesite' {
+  class { 'ntp':
+    tinker => true,
+    servers => [ 'puppet-master iburst', ],
+  }
+  #include network::bridge_dhcp_on
+
+  include haproxy
+  haproxy::listen { 'awesomesite00':
+    ipaddress => '0.0.0.0',
+    ports     => '80',
+    mode      => 'http',
+    options   => {
+      'option'  => [
+        'tcplog',
+        #'ssl-hello-chk',
+        ],
+        'balance' => 'roundrobin',
+    },
+  }
+
+  haproxy::listen { 'stats':
+    ipaddress => '0.0.0.0',
+    ports     => '9090',
+    options   => {
+      'mode'  => 'http',
+      'stats' => [
+        'uri /',
+      ],
+    },
+  }
+}
+
+node /^mysqldb\d+/ {
+  class { 'ntp':
+    tinker => true,
+    servers => [ 'puppet-master iburst', ],
+  }
+  class { 'mysql::server':
+  }
 }

@@ -65,9 +65,9 @@ Start all nodes.
 for n in {1..3}
 do
   VBoxManage startvm Razor-Small-${n}
-  sleep 30
+  sleep 10
   VBoxManage startvm Razor-Large-${n}
-  sleep 30
+  sleep 10
 done
 ```
 

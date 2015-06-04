@@ -118,7 +118,7 @@ Policies are the rules used by Razor to decide what to do with the available nod
 
 #### Web servers
 
-This rule will use upto 2 nodes tagged with the tag `small` and `1cpu`, provision with CentOS, name them `awesomeweb${id}` (e.g., `node17` would be named `awesomeweb17`).
+This rule will use upto 2 nodes tagged with the tags `small` and `1cpu`, provision with CentOS, name them `awesomeweb${id}` (e.g., `node17` would be named `awesomeweb17`).
 
 ```shell
 razor create-policy --name awesome-web --repo centos-6.6 --broker pe --tag '[ "small", "1cpu" ]' --enabled --hostname 'awesomeweb${id}' --root-password secret --max-count 2 --task centos/6/custom --node-metadata role=awesome-web --node-metadata group=awesomesite
@@ -126,7 +126,7 @@ razor create-policy --name awesome-web --repo centos-6.6 --broker pe --tag '[ "s
 
 #### Load balancer
 
-This rule will use 1 node tagged with the tag `small` and `2cpu`, provision with CentOS, name it `awesomesite` (e.g., `node17` would be named `awesomesite`).
+This rule will use 1 node tagged with the tags `small` and `2cpu`, provision with CentOS, name it `awesomesite` (e.g., `node17` would be named `awesomesite`).
 
 ```shell
 razor create-policy --name awesome-lb --repo centos-6.6 --broker pe --tag '[ "small", "2cpu" ]' --enabled --hostname 'awesomesite' --root-password secret --max-count 1 --task centos/6/custom --node-metadata role=awesome-lb --node-metadata group=awesomesite
@@ -134,7 +134,7 @@ razor create-policy --name awesome-lb --repo centos-6.6 --broker pe --tag '[ "sm
 
 #### MySQL DB server
 
-This rule will use 1 node tagged with the tag `large` and `2cpu`, provision with CentOS, name it `mysqldb${id}` (e.g., `node17` would be named `mysqldb17`).
+This rule will use 1 node tagged with the tags `large` and `2cpu`, provision with CentOS, name it `mysqldb${id}` (e.g., `node17` would be named `mysqldb17`).
 
 ```shell
 razor create-policy --name mysqldb --repo centos-6.6 --broker pe --tag '[ "large", "2cpu" ]' --enabled --hostname 'mysqldb${id}' --root-password secret --max-count 1 --task centos/6/custom --node-metadata role=mysqldb --node-metadata group=db
@@ -146,5 +146,5 @@ razor create-policy --name mysqldb --repo centos-6.6 --broker pe --tag '[ "large
 
 This demo requires internet access. There are some bits and pieces to allow to use local files for most of the tasks except installing the Forge Modules.
 
-Instructions to use this off-line is out of scope. Sorry, you're on your own.
+Instructions to use this off-line are out of scope. Sorry, you're on your own.
 

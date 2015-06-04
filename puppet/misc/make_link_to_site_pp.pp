@@ -5,5 +5,10 @@ file { [ '/etc/puppetlabs/puppet/environments', '/etc/puppetlabs/puppet/environm
 
 file { '/etc/puppetlabs/puppet/environments/production/manifests/site.pp':  
   ensure => link, 
-  target => '/etc/puppetlabs/puppet/manifests/site.pp',
+  target => '/tmp/puppet/manifests/site.pp',
+}
+
+file { '/etc/puppetlabs/puppet/manifests/site.pp':  
+  ensure => link, 
+  target => '/tmp/puppet/manifests/site.pp',
 }

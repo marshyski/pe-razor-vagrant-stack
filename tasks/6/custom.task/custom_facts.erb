@@ -1,0 +1,5 @@
+
+mkdir -p /etc/puppetlabs/facter/facts.d
+echo "razor_role=<%= node.metadata['role'] %>" >  /etc/puppetlabs/facter/facts.d/razor_facts.txt
+echo "razor_group=<%= node.metadata['group'] %>" >>  /etc/puppetlabs/facter/facts.d/razor_facts.txt
+echo "razor_nodeid=<%= node.name %>" >>  /etc/puppetlabs/facter/facts.d/razor_facts.txt

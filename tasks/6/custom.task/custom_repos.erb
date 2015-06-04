@@ -1,0 +1,39 @@
+
+for h in /etc/yum.repos.d/*.repo
+do
+  mv ${h} ${h}.disabled
+done
+
+cat >/etc/yum.repos.d/custom.repo <<"EOF"
+[base]
+name=CentOS-6 - Base
+baseurl=http://razor-server/centos6-x86_64/os/Packages
+gpgcheck=1
+gpgkey=http://razor-server/centos6-x86_64/os/RPM-GPG-KEY-CentOS-6
+
+#released updates
+[updates]
+name=CentOS-6 - Updates
+baseurl=http://razor-server/centos6-x86_64/updates/Packages
+gpgcheck=1
+gpgkey=http://razor-server/centos6-x86_64/os/RPM-GPG-KEY-CentOS-6
+
+#additional packages that may be useful
+[extras]
+name=CentOS-6 - Extras
+baseurl=http://razor-server/centos6-x86_64/extras/Packages
+gpgcheck=1
+gpgkey=http://razor-server/centos6-x86_64/os/RPM-GPG-KEY-CentOS-6
+
+[scl]
+name=CentOS-6 - SCL
+baseurl=http://razor-server/centos6-x86_64/scl
+gpgcheck=1
+gpgkey=http://razor-server/centos6-x86_64/os/RPM-GPG-KEY-CentOS-6
+
+[epel]
+name=CentOS-6 - EPEL
+baseurl=http://razor-server/epel6-x86_64/epel
+gpgcheck=0
+
+EOF

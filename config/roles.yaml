@@ -2,12 +2,15 @@
 roles:
 
   base:
-    synced_folders:
-      - host_path: '/Users/fvoges/vagrant/aramco/sync'
-        guest_path: '/enod/hpc'
+#    synced_folders:
+#      - host_path: '~/vagrant/common'
+#        guest_path: '/opt/vagrant-common'
     provisioners:
+      # Placeholder to prevent Vagrant errors due to empty role
       - type: shell
-        inline: '/enod/hpc/scripts/base.sh'
+        inline: 'echo'
+#      - type: shell
+#        inline: '/opt/vagrant-common/scripts/base.sh'
 
   base_2048mb_ram:
     provider:
@@ -31,15 +34,19 @@ roles:
       - type: shell
         inline: "x=`/opt/puppet/bin/puppet config print basemodulepath`;/opt/puppet/bin/puppet config set basemodulepath ${x}:/tmp/puppet/modules"
       - type: shell
-        inline: /opt/puppet/bin/puppet module install puppetlabs/stdlib --version 4.4.0 
+        inline: '/opt/puppet/bin/puppet module install puppetlabs/stdlib --version 4.4.0'
       - type: shell
         inline: '/opt/puppet/bin/puppet module install puppetlabs/pe_gem --version 0.0.1'
       - type: shell
-        inline: '/bin/cp /tmp/puppet/manifests/site.pp /etc/puppetlabs/puppet/manifests/site.pp'
+        inline: '/opt/puppet/bin/puppet module install puppetlabs/haproxy --version 1.2.0'
+      - type: shell
+        inline: '/opt/puppet/bin/puppet module install puppetlabs/apache --version 1.4.1'
+      - type: shell
+        inline: '/opt/puppet/bin/puppet module install puppetlabs/ntp --version 4.0.0'
       - type: shell
         inline: '/opt/puppet/bin/puppet apply /tmp/puppet/misc/make_link_to_site_pp.pp'
       #restart the master for 3.3 and below
-      - type: shell 
+      - type: shell
         inline: 'service pe-httpd restart'
       #restart the master for 3.4 and above
       - type: shell
@@ -70,9 +77,9 @@ roles:
       - {type: hosts}
       - type: pe_bootstrap
 #        version: '3.2.0'
-        master: 'puppet-master' 
+        master: 'puppet-master'
 
-  centos: 
+  centos:
     provisioners:
       - type: shell
         inline: 'service iptables stop; chkconfig iptables off;'
@@ -83,7 +90,7 @@ roles:
         inline: 'iptables -F'
       - type: shell
         inline: 'iptables --table nat --append POSTROUTING --out-interface eth0 -j MASQUERADE'
-      - type: shell 
+      - type: shell
         inline: 'service iptables save'
       - type: shell
         inline: 'service iptables restart'

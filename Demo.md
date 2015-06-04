@@ -41,7 +41,7 @@ The following commands will create 6 nodes (3 small and 3 large).
 
 ```shell
 # This is the default location in Mac OS X. Update if necessary
-VBOX_VM_DIR="~/VirtualBox VMs"
+VBOX_VM_DIR="$HOME/VirtualBox VMs"
 
 for n in {1..3}
 do

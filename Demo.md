@@ -34,6 +34,18 @@ These are the nodes to be provisioned using Razor. You need at least 4 VMs for t
  1. Change the memory size to 850MB.
  1. Change the number of CPUs to 2.
 
+You can do all this form the command line if you have `VBoxManage`. This works in Mac OS X (should work on Linux too):
+
+```shell
+VBOX_VM_DIR="$HOME/VirtualBox VMs"
+
+VBoxManage import example_pxe_boot_vm/Razor-PXE-Boot-Template.ova --vsys 0 --vmname Razor-Template-Small --memory 768 --ostype RedHat_64
+
+VBoxManage clonevm Razor-Template-Small --mode machine --name Razor-Template-Large
+VBoxManage registervm "${VBOX_VM_DIR}"/Razor-Template-Large/Razor-Template-Large.vbox
+VBoxManage modifyvm Razor-Template-Large --cpus 2 --ioapic on --memory 850
+```
+
 Create nodes using the templates. This step requires the `VBoxManage` command line tool.
 
 The following commands will create 6 nodes (3 small and 3 large).
@@ -52,6 +64,13 @@ do
   VBoxManage clonevm Razor-Template-Large --mode machine --name Razor-Large-${n}
   VBoxManage registervm "${VBOX_VM_DIR}"/Razor-Large-${n}/Razor-Large-${n}.vbox
 done
+
+# Add extra CPU for the load balancer node
+VBoxManage modifyvm Razor-Small-2 --cpus 2 --ioapic on
+# OPTIONAL Add extra (bridged) NIC for the load balancer node
+BRIDGE_IF=en0 # <- Change the network interface name used for the bridge
+VBoxManage modifyvm Razor-Small-2 --nic2 bridged --nictype2 82540EM --bridgeadapter2 ${BRIDGE_IF}
+
 ```
 
 Change the number of CPUs to 2 on one of the `Razor-Template-Small` VMs.

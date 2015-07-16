@@ -44,6 +44,10 @@ roles:
       - type: shell
         inline: '/opt/puppet/bin/puppet module install puppetlabs/ntp --version 4.0.0'
       - type: shell
+        inline: '/opt/puppet/bin/puppet module install puppetlabs/apache --version 1.4.1'
+      - type: shell
+        inline: '/opt/puppet/bin/puppet module install puppetlabs/mysql --version 3.4.0'
+      - type: shell
         inline: '/opt/puppet/bin/puppet apply /tmp/puppet/misc/make_link_to_site_pp.pp'
       #restart the master for 3.3 and below
       - type: shell

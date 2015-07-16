@@ -9,6 +9,7 @@ class razor_dnsmasq {
 
   service { 'dnsmasq' :
     ensure => running,
+    enable => true,
     require => Package['dnsmasq'],
   }
 
